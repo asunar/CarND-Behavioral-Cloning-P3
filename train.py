@@ -73,4 +73,4 @@ def run_model(model, X_train,y_train):
     print("Model fit complete, saving model")
     model.save('model.h5')
 
-# run_model(build_model(), X_train, y_train)
+run_model(build_model(), X_train, y_train)

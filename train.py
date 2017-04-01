@@ -21,6 +21,7 @@ for line in lines:
     measurement = float(line[4])
     measurements.append(measurement)
 
+print("Images count:" + str(len(images)))
 
 augmented_images = []
 augmented_measurements = []
@@ -37,29 +38,39 @@ for image, measurement in zip(images, measurements):
 X_train = np.array(augmented_images)
 y_train = np.array(augmented_measurements)
 
-from keras.models import Sequential
-from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D
+print("Augmented Images count:" + str(len(augmented_images)))
 
-model = Sequential()
+def build_model():
+    from keras.models import Sequential
+    from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D
 
-# Normalizing lambda layer
-model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
+    model = Sequential()
 
-# First convolutional layer
-model.add(Convolution2D(6,5,5,activation='relu'))
-model.add(MaxPooling2D())
+    # Normalizing lambda layer
+    model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
 
-# Second convolutional layer
-model.add(Convolution2D(6,5,5,activation='relu'))
-model.add(MaxPooling2D())
-model.add(Flatten())
+    # First convolutional layer
+    model.add(Convolution2D(6,5,5,activation='relu'))
+    model.add(MaxPooling2D())
 
-# Fully-connected layers
-model.add(Dense(120))
-model.add(Dense(84))
-model.add(Dense(1))
+    # Second convolutional layer
+    model.add(Convolution2D(6,5,5,activation='relu'))
+    model.add(MaxPooling2D())
+    model.add(Flatten())
 
-model.compile(loss='mse', optimizer='adam')
-model.fit(X_train, y_train, validation_split=0.2, shuffle= True, nb_epoch=6)
+    # Fully-connected layers
+    model.add(Dense(120))
+    model.add(Dense(84))
+    model.add(Dense(1))
 
-model.save('model.h5')
+    model.compile(loss='mse', optimizer='adam')
+
+    print("Built the model")
+    return model
+
+def run_model(model, X_train,y_train):
+    model.fit(X_train, y_train, validation_split=0.2, shuffle= True, nb_epoch=6)
+    print("Model fit complete, saving model")
+    model.save('model.h5')
+
+# run_model(build_model(), X_train, y_train)

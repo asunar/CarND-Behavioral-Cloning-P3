@@ -9,10 +9,12 @@ def get_logs(path):
     lines = []
     with open (path) as csvfile:
         reader = csv.reader(csvfile)
-        for line in reader:
-            lines.append(line)
+        # [i for i in range(10)]
+        return [line for line in reader]
+    #     for line in reader:
+    #         lines.append(line)
 
-    return lines
+    # return lines
 
 def get_images_measurements(lines):
     images = []
@@ -37,24 +39,24 @@ def get_images_measurements(lines):
     return images_measurements 
 
 def get_training_data(lines):
-    return get_images_measurements(lines)
+    images_measurements = get_images_measurements(lines)
+    return augment_images(images_measurements[0], images_measurements[1])
 
-# augmented_images = []
-# augmented_measurements = []
-# for image, measurement in zip(images, measurements):
-# 	augmented_images.append(image)
-# 	augmented_measurements.append(measurement)
-	
-# 	# Flip images to reduce bias from anti-clockwise driving
-# 	flipped_image = cv2.flip(image, 1)
-# 	flipped_measurement = float(measurement) * -1.0
-# 	augmented_images.append(flipped_image)
-# 	augmented_measurements.append(flipped_measurement)
+def augment_images(images, measurements):
+    augmented_images = []
+    augmented_measurements = []
+    for image, measurement in zip(images, measurements):
+        augmented_images.append(image)
+        augmented_measurements.append(measurement)
+        flipped_image = cv2.flip(image, 1)
+        flipped_measurement = float(measurement) * -1.0
+        augmented_images.append(flipped_image)
+        augmented_measurements.append(flipped_measurement)
 
-# X_train = np.array(augmented_images)
-# y_train = np.array(augmented_measurements)
+    augmented_images_array = np.array(augmented_images)
+    augmented_measurements_array = np.array(augmented_measurements)
 
-# print("Augmented Images count:" + str(len(augmented_images)))
+    return (augmented_images_array, augmented_measurements_array) 
 
 def build_model():
     model = Sequential()

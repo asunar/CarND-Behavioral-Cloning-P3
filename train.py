@@ -8,13 +8,9 @@ from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D
 def get_logs(path):
     lines = []
     with open (path) as csvfile:
+        next(csvfile)
         reader = csv.reader(csvfile)
-        # [i for i in range(10)]
         return [line for line in reader]
-    #     for line in reader:
-    #         lines.append(line)
-
-    # return lines
 
 def get_images_measurements(lines):
     images = []
@@ -38,9 +34,7 @@ def get_images_measurements(lines):
 
     return images_measurements 
 
-def get_training_data(lines):
-    images_measurements = get_images_measurements(lines)
-    return augment_images(images_measurements[0], images_measurements[1])
+
 
 def augment_images(images, measurements):
     augmented_images = []
@@ -57,6 +51,40 @@ def augment_images(images, measurements):
     augmented_measurements_array = np.array(augmented_measurements)
 
     return (augmented_images_array, augmented_measurements_array) 
+
+def get_left_right_camera_images_measurements_with_correction(lines):
+    images = []
+    measurements = []
+    for line in lines:
+        for i in range(3):
+            # Load images from center, left and right cameras
+            source_path = line[i]
+            tokens = source_path.split('/')
+            filename = tokens[-1]
+            local_path = "./data/IMG/" + filename
+            image = cv2.imread(local_path)
+            images.append(image)
+        correction = 0.2
+        measurement = float(line[3])
+        
+        # Steering adjustment for center images
+        measurements.append(measurement)
+        
+        # Add correction for steering for left images
+        measurements.append(measurement+correction)
+        
+        # Minus correction for steering for right images
+        measurements.append(measurement-correction)
+
+    return (images, measurements)
+
+def get_training_data(lines):
+    images_measurements = get_images_measurements(lines)
+    augmented_images_measurements = augment_images(images_measurements[0], images_measurements[1])
+    left_right_camera_images_measurements_with_correction = get_left_right_camera_images_measurements_with_correction(lines)
+
+
+    return augmented_images_measurements
 
 def build_model():
     model = Sequential()

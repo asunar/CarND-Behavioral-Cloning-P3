@@ -8,14 +8,14 @@ from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D
 def get_logs(path):
     lines = []
     with open (path) as csvfile:
-        next(csvfile)
+        # next(csvfile)
         reader = csv.reader(csvfile)
         for line in reader:
             lines.append(line)
 
     return lines
 
-def get_training_data(lines):
+def get_images_measurements(lines):
     images = []
     measurements = []
 
@@ -29,12 +29,12 @@ def get_training_data(lines):
         measurement = line[3]
         measurements.append(measurement)
     
-    print("Images count:" + str(len(images)))
+    print("Images count:" + str(len(images)))    
 
-    X_train = np.array(images[1:])
-    y_train = np.array(measurements[1:])    
-    training_data = (X_train, y_train)
-    return training_data
+    return (images[1:], measurements[1:])
+
+def get_training_data(lines):
+    return get_images_measurements(lines)
 
 # augmented_images = []
 # augmented_measurements = []

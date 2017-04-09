@@ -14,6 +14,16 @@ def get_logs(path):
         reader = csv.reader(csvfile)
         return [line for line in reader]
 
+def copy_my_images_to_data():
+    import os
+    import shutil
+    destination = 'data/IMG'
+    # files = os.listdir('/etc/BNALP')
+    my_training_data_path = 'my_training_data/IMG'
+    files = os.listdir(my_training_data_path)
+    for file in files:
+        shutil.move(my_training_data_path + "/" + file, destination)
+
 def get_training_data(lines, local_image_path):
     images = []
     measurements = []
@@ -51,6 +61,9 @@ def get_training_data(lines, local_image_path):
     X_train = np.array(augmented_images)
     y_train = np.array(augmented_measurements)    
 
+    print("X_train:" + str(len(X_train)))
+    print("y_train:" + str(len(y_train)))
+
     return (X_train, y_train)
 
 def build_model():
@@ -84,13 +97,15 @@ def run_model(model, X_train,y_train):
 def train():
     sample_log = get_logs('data/driving_log.csv')
     my_log = get_logs('my_training_data/driving_log.csv')
-    sample_training_data = get_training_data(sample_log, "./data/IMG/")
-    my_training_data = get_training_data(my_log, "./my_training_data/IMG/")
-    X_train = np.concatenate([sample_training_data[0], my_training_data[0]]) 
-    y_train = np.concatenate([sample_training_data[1], my_training_data[1]]) 
-    
+
+    import itertools
+    all_logs = itertools.chain(sample_log, my_log)
+    training_data = get_training_data(all_logs, "./data/IMG/")
+    X_train, y_train = (training_data[0], training_data[1])
     model = build_model()
 
-    run_model(model, X_train, y_train)
+    # run_model(model, X_train, y_train)
+
 
 train()
+# copy_my_images_to_data()

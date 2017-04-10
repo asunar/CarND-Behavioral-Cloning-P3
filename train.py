@@ -104,8 +104,8 @@ def train():
     X_train, y_train = (training_data[0], training_data[1])
     model = build_model()
 
-    # run_model(model, X_train, y_train)
+    run_model(model, X_train, y_train)
 
 
-train()
 # copy_my_images_to_data()
+train()

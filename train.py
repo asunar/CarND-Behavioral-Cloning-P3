@@ -29,7 +29,7 @@ def get_training_data(lines, local_image_path):
     measurements = []
     counter = 0
     for line in lines:
-        if counter == 10:
+        if counter == 8000:
             break
         for i in range(3):
             # Load images from center, left and right cameras
@@ -94,7 +94,7 @@ def build_model():
     return model
 
 def run_model(model, X_train,y_train):
-    model.fit(X_train, y_train, validation_split=0.2, shuffle= True, nb_epoch=6)
+    model.fit(X_train, y_train, validation_split=0.2, shuffle= True, nb_epoch=3)
     print("Model fit complete, saving model")
     model.save('model.h5')
 

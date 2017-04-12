@@ -29,8 +29,8 @@ def get_training_data(lines, local_image_path):
     measurements = []
     counter = 0
     for line in lines:
-        # if counter == 8000:
-        #     break
+        if counter == 10:
+            break
         for i in range(3):
             # Load images from center, left and right cameras
             source_path = line[i]
@@ -50,7 +50,7 @@ def get_training_data(lines, local_image_path):
         
         # Minus correction for steering for right images
         measurements.append(measurement-correction)
-        # counter = counter + 1
+        counter = counter + 1
 
     augmented_images = []
     augmented_measurements = []
@@ -104,11 +104,13 @@ def train():
 
 #    import itertools
 #    all_logs = itertools.chain(sample_log, my_log)
-    training_data = get_training_data(sample_log, "./data/IMG/")
-    X_train, y_train = (training_data[0], training_data[1])
-    model = build_model()
+    sample_training_data = get_training_data(sample_log, "./data/IMG/")
+    # my_training_data = get_training_data(sample_log, "./my_training_data/IMG/")
+    X_train, y_train = (sample_training_data[0], sample_training_data[1])
+    # X_train, y_train = (training_data[0], training_data[1])
+    # model = build_model()
 
-    run_model(model, X_train, y_train)
+    # run_model(model, X_train, y_train)
 
 
 # copy_my_images_to_data()

@@ -29,8 +29,8 @@ def get_training_data(lines, local_image_path):
     measurements = []
     counter = 0
     for line in lines:
-        if counter == 8000:
-            break
+        # if counter == 8000:
+        #     break
         for i in range(3):
             # Load images from center, left and right cameras
             source_path = line[i]
@@ -50,7 +50,7 @@ def get_training_data(lines, local_image_path):
         
         # Minus correction for steering for right images
         measurements.append(measurement-correction)
-        counter = counter + 1
+        # counter = counter + 1
 
     augmented_images = []
     augmented_measurements = []

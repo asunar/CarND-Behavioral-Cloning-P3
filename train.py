@@ -8,49 +8,39 @@ from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D,Cro
 
 def get_logs(path):
     import csv
+    import itertools
     lines = []
     with open (path) as csvfile:
         next(csvfile)
         reader = csv.reader(csvfile)
-        return [line for line in reader]
-
-def copy_my_images_to_data():
-    import os
-    import shutil
-    destination = 'data/IMG'
-    # files = os.listdir('/etc/BNALP')
-    my_training_data_path = 'my_training_data/IMG'
-    files = os.listdir(my_training_data_path)
-    for file in files:
-        shutil.move(my_training_data_path + "/" + file, destination)
+        # return [line for line in reader]
+        return itertools.islice([line for line in reader], 9000)
 
 def get_training_data(lines, local_image_path):
     images = []
     measurements = []
     counter = 0
     for line in lines:
-        if counter == 10:
-            break
         for i in range(3):
             # Load images from center, left and right cameras
             source_path = line[i]
             tokens = source_path.split('/')
             filename = tokens[-1]
             local_path = local_image_path + filename
+            # print(local_path)
             image = cv2.imread(local_path)
             images.append(image)
         correction = 0.2
         measurement = float(line[3])
-        
+
         # Steering adjustment for center images
         measurements.append(measurement)
-        
+
         # Add correction for steering for left images
         measurements.append(measurement+correction)
-        
+
         # Minus correction for steering for right images
         measurements.append(measurement-correction)
-        counter = counter + 1
 
     augmented_images = []
     augmented_measurements = []
@@ -63,10 +53,8 @@ def get_training_data(lines, local_image_path):
         augmented_measurements.append(flipped_measurement)
 
     X_train = np.array(augmented_images)
-    y_train = np.array(augmented_measurements)    
+    y_train = np.array(augmented_measurements)
 
-    print("X_train:" + str(len(X_train)))
-    print("y_train:" + str(len(y_train)))
 
     return (X_train, y_train)
 
@@ -100,18 +88,21 @@ def run_model(model, X_train,y_train):
 
 def train():
     sample_log = get_logs('data/driving_log.csv')
-#    my_log = get_logs('my_training_data/driving_log.csv')
+    my_log = get_logs('my_training_data/driving_log.csv')
 
-#    import itertools
-#    all_logs = itertools.chain(sample_log, my_log)
     sample_training_data = get_training_data(sample_log, "./data/IMG/")
-    # my_training_data = get_training_data(sample_log, "./my_training_data/IMG/")
-    X_train, y_train = (sample_training_data[0], sample_training_data[1])
-    # X_train, y_train = (training_data[0], training_data[1])
-    # model = build_model()
+    my_training_data = get_training_data(my_log, "./my_training_data/IMG/")
+
+    x = np.concatenate([sample_training_data[0], my_training_data[0]])
+    y = np.concatenate([sample_training_data[1], my_training_data[1]])
+    X_train, y_train = (x, y)
+
+    print("X_train:" + str(len(x)))
+    print("y_train:" + str(len(y)))
+
+    model = build_model()
 
     # run_model(model, X_train, y_train)
 
 
-# copy_my_images_to_data()
 train()

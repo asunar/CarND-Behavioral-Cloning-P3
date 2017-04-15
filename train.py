@@ -1,9 +1,11 @@
 
 import cv2
-
+import cv2
+import sklearn
 import numpy as np
 from keras.models import Sequential
 from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D,Cropping2D
+
 
 
 def get_logs(path):
@@ -19,7 +21,7 @@ def get_logs(path):
 def get_training_data(lines, local_image_path):
     images = []
     measurements = []
-    counter = 0
+
     for line in lines:
         for i in range(3):
             # Load images from center, left and right cameras
@@ -82,27 +84,27 @@ def build_model():
     return model
 
 def run_model(model, X_train,y_train):
-    model.fit(X_train, y_train, validation_split=0.2, shuffle= True, nb_epoch=3)
+    model.fit(X_train, y_train, validation_split=0.2, shuffle= True, nb_epoch=6)
     print("Model fit complete, saving model")
     model.save('model.h5')
 
 def train():
     sample_log = get_logs('data/driving_log.csv')
-    my_log = get_logs('my_training_data/driving_log.csv')
+    # my_log = get_logs('my_training_data/driving_log.csv')
 
     sample_training_data = get_training_data(sample_log, "./data/IMG/")
-    my_training_data = get_training_data(my_log, "./my_training_data/IMG/")
+    # my_training_data = get_training_data(my_log, "./my_training_data/IMG/")
 
-    x = np.concatenate([sample_training_data[0], my_training_data[0]])
-    y = np.concatenate([sample_training_data[1], my_training_data[1]])
-    X_train, y_train = (x, y)
+    # x = np.concatenate([sample_training_data[0], my_training_data[0]])
+    # y = np.concatenate([sample_training_data[1], my_training_data[1]])
+    X_train, y_train = (sample_training_data[0], sample_training_data[1])
 
-    print("X_train:" + str(len(x)))
-    print("y_train:" + str(len(y)))
+    print("X_train:" + str(len(X_train)))
+    print("y_train:" + str(len(y_train)))
 
     model = build_model()
 
-    # run_model(model, X_train, y_train)
+    run_model(model, X_train, y_train)
 
 
 train()

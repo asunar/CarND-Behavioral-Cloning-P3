@@ -90,14 +90,15 @@ def run_model(model, X_train,y_train):
 
 def train():
     sample_log = get_logs('data/driving_log.csv')
-    # my_log = get_logs('my_training_data/driving_log.csv')
+    my_log = get_logs('my_training_data/driving_log.csv')
 
     sample_training_data = get_training_data(sample_log, "./data/IMG/")
-    # my_training_data = get_training_data(my_log, "./my_training_data/IMG/")
+    my_training_data = get_training_data(my_log, "./my_training_data/IMG/")
 
-    # x = np.concatenate([sample_training_data[0], my_training_data[0]])
-    # y = np.concatenate([sample_training_data[1], my_training_data[1]])
-    X_train, y_train = (sample_training_data[0], sample_training_data[1])
+    x = np.concatenate([sample_training_data[0], my_training_data[0]])
+    y = np.concatenate([sample_training_data[1], my_training_data[1]])
+    X_train, y_train = (x, y)
+    # X_train, y_train = (sample_training_data[0], sample_training_data[1])
 
     print("X_train:" + str(len(X_train)))
     print("y_train:" + str(len(y_train)))

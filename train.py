@@ -7,11 +7,23 @@ from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D, Cr
 import sklearn.utils
 from sklearn.model_selection import train_test_split
 
-def get_logs(path):
+
+def print_sample(list):
+    result = [x[0] + " - " + x[3] for x in list]
+    print(result) 
+
+
+def get_logs(sample_path, my_training_data_path):
     import csv
 
     samples = []
-    with open(path) as csvfile:
+    with open(sample_path) as csvfile:
+        next(csvfile)
+        reader = csv.reader(csvfile)
+        for line in reader:
+            samples.append(line)
+
+    with open(my_training_data_path) as csvfile:
         next(csvfile)
         reader = csv.reader(csvfile)
         for line in reader:
@@ -23,15 +35,19 @@ def get_logs(path):
         
 def generator(samples, batch_size=32):
     num_samples = len(samples)
+    # print('[%s]' % ', '.join(map(str, samples)))
     while 1: # Loop forever so the generator never terminates
         # shuffle(samples)
         for offset in range(0, num_samples, batch_size):
             batch_samples = samples[offset:offset+batch_size]
-
             images = []
             angles = []
             for batch_sample in batch_samples:
-                name = 'data/IMG/'+batch_sample[0].split('/')[-1]
+                if batch_sample[0].startswith("/Users"):
+                    folder_name = "my_training_data"
+                else:
+                    folder_name = "data"
+                name = folder_name + '/IMG/'+batch_sample[0].split('/')[-1]
                 center_image = cv2.imread(name)
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
@@ -120,12 +136,10 @@ def run_model(model, train_samples, validation_samples):
                 nb_val_samples=len(validation_samples), nb_epoch=3)    
     model.save('model.h5')
 
-def print_sample(list):
-    result = [x[0] + " - " + x[3] for x in list]
-    print(result) 
+
 
 def train():
-    train_samples, validation_samples = get_logs('data/driving_log.csv')
+    train_samples, validation_samples = get_logs('data/driving_log.csv', 'my_training_data/driving_log.csv')
 
     model = build_model()
     run_model(model, train_samples, validation_samples)

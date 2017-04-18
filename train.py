@@ -118,6 +118,7 @@ def run_model(model, train_samples, validation_samples):
     model.fit_generator(train_generator, samples_per_epoch= 
                 len(train_samples), validation_data=validation_generator, 
                 nb_val_samples=len(validation_samples), nb_epoch=3)    
+    model.save('model.h5')
 
 def print_sample(list):
     result = [x[0] + " - " + x[3] for x in list]

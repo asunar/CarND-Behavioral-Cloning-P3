@@ -7,12 +7,6 @@ from keras.layers import Flatten, Dense, Lambda, Convolution2D, MaxPooling2D, Cr
 import sklearn.utils
 from sklearn.model_selection import train_test_split
 
-
-def print_sample(list):
-    result = [x[0] + " - " + x[3] for x in list]
-    print(result) 
-
-
 def get_logs(sample_path, my_training_data_path):
     import csv
 
@@ -81,48 +75,6 @@ def generator(samples, batch_size=32):
             y_train = np.array(augmented_angles)
 
             yield sklearn.utils.shuffle(X_train, y_train)
-
-def get_training_data(lines, local_image_path):
-    images = []
-    measurements = []
-
-    for line in lines:
-        for i in range(3):
-            # Load images from center, left and right cameras
-            source_path = line[i]
-            tokens = source_path.split('/')
-            filename = tokens[-1]
-            local_path = local_image_path + filename
-            # print(local_path)
-            image = cv2.imread(local_path)
-            images.append(image)
-        correction = 0.2
-        measurement = float(line[3])
-
-        # Steering adjustment for center images
-        measurements.append(measurement)
-
-        # Add correction for steering for left images
-        measurements.append(measurement+correction)
-
-        # Minus correction for steering for right images
-        measurements.append(measurement-correction)
-
-    augmented_images = []
-    augmented_measurements = []
-    for image, measurement in zip(images, measurements):
-        augmented_images.append(image)
-        augmented_measurements.append(measurement)
-        flipped_image = cv2.flip(image, 1)
-        flipped_measurement = float(measurement) * -1.0
-        augmented_images.append(flipped_image)
-        augmented_measurements.append(flipped_measurement)
-
-    X_train = np.array(augmented_images)
-    y_train = np.array(augmented_measurements)
-
-
-    return (X_train, y_train)
 
 def build_model():
     model = Sequential()

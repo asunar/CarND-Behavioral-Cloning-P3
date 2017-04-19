@@ -35,9 +35,7 @@ def get_logs(sample_path, my_training_data_path):
         
 def generator(samples, batch_size=32):
     num_samples = len(samples)
-    # print('[%s]' % ', '.join(map(str, samples)))
     while 1: # Loop forever so the generator never terminates
-        # shuffle(samples)
         for offset in range(0, num_samples, batch_size):
             batch_samples = samples[offset:offset+batch_size]
             images = []
@@ -158,7 +156,7 @@ def run_model(model, train_samples, validation_samples):
     validation_generator = generator(validation_samples, batch_size=32)
 
     model.fit_generator(train_generator, samples_per_epoch= 
-                32, validation_data=validation_generator, 
+                192, validation_data=validation_generator, 
                 nb_val_samples=len(validation_samples), nb_epoch=3)    
     model.save('model.h5')
 

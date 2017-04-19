@@ -23,11 +23,11 @@ def get_logs(sample_path, my_training_data_path):
         for line in reader:
             samples.append(line)
 
-    # with open(my_training_data_path) as csvfile:
-    #     next(csvfile)
-    #     reader = csv.reader(csvfile)
-    #     for line in reader:
-    #         samples.append(line)
+    with open(my_training_data_path) as csvfile:
+        next(csvfile)
+        reader = csv.reader(csvfile)
+        for line in reader:
+            samples.append(line)
 
     train_samples, validation_samples = train_test_split(samples, test_size=0.2)
 

@@ -47,11 +47,21 @@ def generator(samples, batch_size=32):
                     folder_name = "my_training_data"
                 else:
                     folder_name = "data"
-                name = folder_name + '/IMG/'+batch_sample[0].split('/')[-1]
-                center_image = cv2.imread(name)
+                
+                for i in range(3): #Iterate over center,left, right image paths
+                    name = folder_name + '/IMG/'+batch_sample[i].split('/')[-1]
+                    image = cv2.imread(name)
+                    angle = float(batch_sample[3])
+                    images.append(image)
+                
+                correction = 0.2
                 center_angle = float(batch_sample[3])
-                images.append(center_image)
+                left_angle = center_angle + correction 
+                right_angle = center_angle - correction 
+
                 angles.append(center_angle)
+                angles.append(left_angle)
+                angles.append(right_angle)
             
             # print("Images pre augmentation:" + str(len(images)))
             # print("Angles pre augmentation:" + str(len(angles)))

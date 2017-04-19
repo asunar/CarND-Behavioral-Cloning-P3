@@ -53,8 +53,8 @@ def generator(samples, batch_size=32):
                 images.append(center_image)
                 angles.append(center_angle)
             
-            print("Images pre augmentation:" + str(len(images)))
-            print("Angles pre augmentation:" + str(len(angles)))
+            # print("Images pre augmentation:" + str(len(images)))
+            # print("Angles pre augmentation:" + str(len(angles)))
 
             augmented_images = []
             augmented_angles = []
@@ -66,8 +66,8 @@ def generator(samples, batch_size=32):
                 augmented_images.append(flipped_image)
                 augmented_angles.append(flipped_angle)
 
-            print("Images post augmentation:" + str(len(augmented_images)))
-            print("Angles post augmentation:" + str(len(augmented_angles)))
+            # print("Images post augmentation:" + str(len(augmented_images)))
+            # print("Angles post augmentation:" + str(len(augmented_angles)))
 
             X_train = np.array(augmented_images)
             y_train = np.array(augmented_angles)

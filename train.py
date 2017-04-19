@@ -52,10 +52,26 @@ def generator(samples, batch_size=32):
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
                 angles.append(center_angle)
+            
+            print("Images pre augmentation:" + str(len(images)))
+            print("Angles pre augmentation:" + str(len(angles)))
 
-            # trim image to only see section with road
-            X_train = np.array(images)
-            y_train = np.array(angles)
+            augmented_images = []
+            augmented_angles = []
+            for image, angle in zip(images, angles):
+                augmented_images.append(image)
+                augmented_angles.append(angle)
+                flipped_image = cv2.flip(image, 1)
+                flipped_angle = float(angle) * -1.0
+                augmented_images.append(flipped_image)
+                augmented_angles.append(flipped_angle)
+
+            print("Images post augmentation:" + str(len(augmented_images)))
+            print("Angles post augmentation:" + str(len(augmented_angles)))
+
+            X_train = np.array(augmented_images)
+            y_train = np.array(augmented_angles)
+
             yield sklearn.utils.shuffle(X_train, y_train)
 
 def get_training_data(lines, local_image_path):
